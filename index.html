@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: papayawhip;
+        }
+        #chat-box {
+            width: 50%;
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: auto;
+            text-align: left;
+            background-color: #f9f9f9;
+        }
+        input, button {
+            margin-top: 10px;
+            padding: 8px;
+        }
+    </style>
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("user-input").value.trim();
+            if (!userInput) return;
+
+            const chatBox = document.getElementById("chat-box");
+
+            // Display user message in the chat box
+            chatBox.innerHTML += <p><strong>You:</strong> ${userInput}</p>;
+
+            document.getElementById("user-input").value = "";
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/chat", {  
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userInput })
+                });
+
+                const data = await response.json();
+                
+                // Display chatbot response
+                chatBox.innerHTML += <p><strong>Bot:</strong> ${data.response}</p>;
+                
+                // Scroll to the bottom of the chat box
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (error) {
+                chatBox.innerHTML += <p><strong>Bot:</strong> Error connecting to server.</p>;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Cybersecurity Chatbot</h2>
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="Type your message..." onkeypress="if(event.key === 'Enter') sendMessage()" />
+    <button onclick="sendMessage()">Send</button>
+</body>
+</html>
